@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="description" content="FonTakip - Kişisel yatırım fonu portföy takip ve analiz uygulaması">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a0e1a">
+    <title>FonTakip - Portföy Takip</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Ambient Background -->
+    <div class="ambient-bg">
+        <div class="ambient-orb orb-1"></div>
+        <div class="ambient-orb orb-2"></div>
+        <div class="ambient-orb orb-3"></div>
+    </div>
+
+    <!-- App Container -->
+    <div id="app">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo">
+                    <span class="logo-icon">◈</span>
+                    <span class="logo-text">FonTakip</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="live-indicator">
+                    <span class="pulse-dot"></span>
+                    <span class="live-text" id="lastUpdate">--</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="bottom-nav" id="bottomNav">
+            <button class="nav-btn active" data-page="dashboard" id="nav-dashboard">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                <span>Panel</span>
+            </button>
+            <button class="nav-btn" data-page="portfolio" id="nav-portfolio">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                <span>Portföy</span>
+            </button>
+            <button class="nav-btn" data-page="rebalance" id="nav-rebalance">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-6.219-8.56"/><circle cx="12" cy="12" r="3"/></svg>
+                <span>Denge</span>
+            </button>
+            <button class="nav-btn" data-page="simulator" id="nav-simulator">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+                <span>Simülatör</span>
+            </button>
+            <button class="nav-btn" data-page="advisor" id="nav-advisor">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 014 4c0 1.95-2 5-4 5s-4-3.05-4-5a4 4 0 014-4z"/><path d="M12 14c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z"/><path d="M17 2l2 2-4 4"/></svg>
+                <span>Danışman</span>
+            </button>
+        </nav>
+
+        <!-- Pages Container -->
+        <main class="pages-container" id="pagesContainer">
+
+            <!-- ==================== DASHBOARD PAGE ==================== -->
+            <section class="page active" id="page-dashboard">
+                <!-- Total Portfolio Card -->
+                <div class="hero-card" id="heroCard">
+                    <div class="hero-label">Toplam Portföy Değeri</div>
+                    <div class="hero-value" id="totalValue">₺0,00</div>
+                    <div class="hero-change" id="totalChange">
+                        <span class="change-badge neutral" id="totalChangeBadge">%0,00</span>
+                        <span class="change-detail" id="totalChangeDetail">Kâr/Zarar: ₺0,00</span>
+                    </div>
+                    <div class="hero-meta">
+                        <span>Yatırılan: <strong id="totalInvested">₺0,00</strong></span>
+                        <span>|</span>
+                        <span>Fon Sayısı: <strong>5</strong></span>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #00d4aa, #00b894);">📈</div>
+                        <div class="stat-info">
+                            <span class="stat-label">En İyi Fon</span>
+                            <span class="stat-value" id="bestFund">--</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a24);">📉</div>
+                        <div class="stat-info">
+                            <span class="stat-label">En Düşük Fon</span>
+                            <span class="stat-value" id="worstFund">--</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);">🎯</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Denge Durumu</span>
+                            <span class="stat-value" id="balanceStatus">--</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #fdcb6e, #f39c12);">📅</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Aylık Hedef</span>
+                            <span class="stat-value" id="monthlyTarget">₺1.000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <h3 class="card-title">Portföy Dağılımı</h3>
+                        <div class="chart-container">
+                            <canvas id="allocationChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h3 class="card-title">Varlık Sınıfı Dağılımı</h3>
+                        <div class="chart-container">
+                            <canvas id="assetClassChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fund Cards -->
+                <h3 class="section-title">Fonlarım</h3>
+                <div class="fund-cards-grid" id="fundCardsGrid">
+                    <!-- Generated by JS -->
+                </div>
+
+                <!-- Portfolio Growth Chart -->
+                <div class="chart-card full-width">
+                    <h3 class="card-title">Portföy Büyüme Grafiği</h3>
+                    <div class="chart-container chart-wide">
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== PORTFOLIO PAGE ==================== -->
+            <section class="page" id="page-portfolio">
+                <h2 class="page-title">Portföy Yönetimi</h2>
+                <p class="page-subtitle">Alım/satım işlemlerini ekle, fon fiyatlarını güncelle</p>
+
+                <!-- Price Update Section -->
+                <div class="glass-card">
+                    <h3 class="card-title">📊 Güncel Fon Fiyatları</h3>
+                    <p class="card-desc">TEFAS'tan güncel fiyatları buraya gir</p>
+                    <div class="price-grid" id="priceGrid">
+                        <!-- Generated by JS -->
+                    </div>
+                    <button class="btn btn-primary" id="savePricesBtn" onclick="savePrices()">
+                        <span>Fiyatları Kaydet</span>
+                    </button>
+                </div>
+
+                <!-- Add Transaction -->
+                <div class="glass-card">
+                    <h3 class="card-title">➕ Yeni İşlem Ekle</h3>
+                    <form id="transactionForm" onsubmit="addTransaction(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="txFund">Fon</label>
+                                <select id="txFund" required>
+                                    <option value="">Fon Seç...</option>
+                                    <option value="AFA">AFA - Amerika Hisse</option>
+                                    <option value="AFT">AFT - Yeni Teknolojiler</option>
+                                    <option value="IJC">IJC - Yarı İletken</option>
+                                    <option value="GTA">GTA - Altın</option>
+                                    <option value="AKE">AKE - Eurobond</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="txType">İşlem Türü</label>
+                                <div class="toggle-group">
+                                    <input type="radio" name="txType" id="txBuy" value="buy" checked>
+                                    <label for="txBuy" class="toggle-btn buy">Alış</label>
+                                    <input type="radio" name="txType" id="txSell" value="sell">
+                                    <label for="txSell" class="toggle-btn sell">Satış</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="txAmount">Tutar (₺)</label>
+                                <input type="number" id="txAmount" step="0.01" min="0" placeholder="1000.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="txPrice">Birim Fiyat (₺)</label>
+                                <input type="number" id="txPrice" step="0.0001" min="0" placeholder="1.3300" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="txDate">Tarih</label>
+                                <input type="date" id="txDate" required>
+                            </div>
+                        </div>
+                        <div class="form-info" id="txCalc">
+                            <span>Hesaplanan Pay Adedi: <strong id="txUnits">--</strong></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <span>İşlemi Kaydet</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Transaction History -->
+                <div class="glass-card">
+                    <h3 class="card-title">📋 İşlem Geçmişi</h3>
+                    <div class="transaction-list" id="transactionList">
+                        <div class="empty-state">
+                            <span class="empty-icon">📭</span>
+                            <p>Henüz işlem eklenmedi</p>
+                            <p class="empty-hint">İlk yatırımını ekleyerek başla!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Telegram Bot Export -->
+                <div class="glass-card" style="border-left: 3px solid #29b6f6;">
+                    <h3 class="card-title">📲 Telegram Bildirim Botu</h3>
+                    <p class="card-desc">Portföy verini Telegram botuna aktarmak için aşağıdaki butona bas. 
+                    İndirilen dosyayı <code>fon</code> klasörüne taşı.</p>
+                    <button class="btn btn-secondary" onclick="exportPortfolio()" style="margin-bottom: 0;">
+                        📥 Portföy Verisini İndir (JSON)
+                    </button>
+                </div>
+            </section>
+
+            <!-- ==================== REBALANCE PAGE ==================== -->
+            <section class="page" id="page-rebalance">
+                <h2 class="page-title">Portföy Dengeleme</h2>
+                <p class="page-subtitle">Hedef ağırlıklara göre portföyünü dengele</p>
+
+                <!-- Target vs Actual -->
+                <div class="glass-card">
+                    <h3 class="card-title">⚖️ Hedef vs Mevcut Dağılım</h3>
+                    <div class="chart-container">
+                        <canvas id="rebalanceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Rebalance Suggestions -->
+                <div class="glass-card">
+                    <h3 class="card-title">🎯 Dengeleme Önerileri</h3>
+                    <p class="card-desc">Hedef ağırlıklara ulaşmak için yapman gereken işlemler</p>
+                    <div id="rebalanceSuggestions">
+                        <div class="empty-state">
+                            <span class="empty-icon">⚖️</span>
+                            <p>Portföye işlem ekledikten sonra dengeleme önerileri burada görünecek</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Next Investment Helper -->
+                <div class="glass-card">
+                    <h3 class="card-title">💰 Sonraki Yatırımı Nereye Yapayım?</h3>
+                    <p class="card-desc">Bir sonraki 1.000 TL'ni en verimli şekilde dağıt</p>
+                    <div class="form-group">
+                        <label for="nextAmount">Yatırım Tutarı (₺)</label>
+                        <input type="number" id="nextAmount" value="1000" min="100" step="100">
+                    </div>
+                    <button class="btn btn-secondary" onclick="calculateNextInvestment()">Hesapla</button>
+                    <div id="nextInvestmentResult" class="result-box" style="display:none;"></div>
+                </div>
+            </section>
+
+            <!-- ==================== SIMULATOR PAGE ==================== -->
+            <section class="page" id="page-simulator">
+                <h2 class="page-title">DCA Simülatör</h2>
+                <p class="page-subtitle">Düzenli yatırımın gücünü keşfet</p>
+
+                <!-- Simulator Form -->
+                <div class="glass-card">
+                    <h3 class="card-title">📐 Parametreler</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="simInitial">Başlangıç Sermayesi (₺)</label>
+                            <input type="number" id="simInitial" value="3500" min="0" step="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="simMonthly">Aylık Ek Yatırım (₺)</label>
+                            <input type="number" id="simMonthly" value="1000" min="0" step="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="simYears">Yatırım Süresi (Yıl)</label>
+                            <input type="number" id="simYears" value="3" min="1" max="30">
+                        </div>
+                        <div class="form-group">
+                            <label for="simReturn">Beklenen Yıllık Getiri (%)</label>
+                            <input type="range" id="simReturn" min="0" max="50" value="25" oninput="document.getElementById('simReturnVal').textContent=this.value+'%'">
+                            <span class="range-value" id="simReturnVal">25%</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="runSimulation()">Simülasyonu Çalıştır</button>
+                </div>
+
+                <!-- Simulation Results -->
+                <div class="glass-card" id="simResults" style="display:none;">
+                    <h3 class="card-title">📊 Sonuçlar</h3>
+                    <div class="sim-summary" id="simSummary"></div>
+                    <div class="chart-container chart-wide">
+                        <canvas id="simChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Scenario Comparison -->
+                <div class="glass-card">
+                    <h3 class="card-title">📈 Senaryo Karşılaştırma</h3>
+                    <p class="card-desc">Farklı getiri senaryolarında portföyünün büyümesi</p>
+                    <div class="chart-container chart-wide">
+                        <canvas id="scenarioChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== ADVISOR PAGE ==================== -->
+            <section class="page" id="page-advisor">
+                <h2 class="page-title">AI Danışman</h2>
+                <p class="page-subtitle">Portföy analizi ve kişiselleştirilmiş öneriler</p>
+
+                <!-- Market Overview -->
+                <div class="glass-card advisor-card">
+                    <div class="advisor-header">
+                        <span class="advisor-avatar">🤖</span>
+                        <div>
+                            <h3 class="card-title" style="margin:0">Piyasa Durumu</h3>
+                            <span class="advisor-timestamp" id="advisorTimestamp">Son güncelleme: --</span>
+                        </div>
+                    </div>
+                    <div class="advisor-content" id="marketOverview">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+
+                <!-- Portfolio Analysis -->
+                <div class="glass-card advisor-card">
+                    <div class="advisor-header">
+                        <span class="advisor-avatar">📊</span>
+                        <div>
+                            <h3 class="card-title" style="margin:0">Portföy Analizi</h3>
+                        </div>
+                    </div>
+                    <div class="advisor-content" id="portfolioAnalysis">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+
+                <!-- Personalized Tips -->
+                <div class="glass-card advisor-card">
+                    <div class="advisor-header">
+                        <span class="advisor-avatar">💡</span>
+                        <div>
+                            <h3 class="card-title" style="margin:0">Kişisel Öneriler</h3>
+                        </div>
+                    </div>
+                    <div class="advisor-tips" id="advisorTips">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+
+                <!-- Fund Deep Dive -->
+                <div class="glass-card advisor-card">
+                    <div class="advisor-header">
+                        <span class="advisor-avatar">🔍</span>
+                        <div>
+                            <h3 class="card-title" style="margin:0">Fon Detay Analizi</h3>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <select id="advisorFundSelect" onchange="showFundAnalysis(this.value)">
+                            <option value="">Analiz edilecek fonu seç...</option>
+                            <option value="AFA">AFA - Amerika Hisse</option>
+                            <option value="AFT">AFT - Yeni Teknolojiler</option>
+                            <option value="IJC">IJC - Yarı İletken</option>
+                            <option value="GTA">GTA - Altın</option>
+                            <option value="AKE">AKE - Eurobond</option>
+                        </select>
+                    </div>
+                    <div id="fundDeepDive"></div>
+                </div>
+
+                <!-- Investment Checklist -->
+                <div class="glass-card advisor-card">
+                    <div class="advisor-header">
+                        <span class="advisor-avatar">✅</span>
+                        <div>
+                            <h3 class="card-title" style="margin:0">Aylık Kontrol Listesi</h3>
+                        </div>
+                    </div>
+                    <div class="checklist" id="monthlyChecklist">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModal" style="display:none;">
+        <div class="modal-card">
+            <h3>İşlemi Sil</h3>
+            <p>Bu işlemi silmek istediğinden emin misin?</p>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" onclick="closeDeleteModal()">İptal</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">Sil</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
