@@ -222,14 +222,18 @@
                     </div>
                 </div>
 
-                <!-- Telegram Bot Export -->
+                <!-- Telegram Bot Export & Cloud Sync -->
                 <div class="glass-card" style="border-left: 3px solid #29b6f6;">
-                    <h3 class="card-title">📲 Telegram Bildirim Botu</h3>
-                    <p class="card-desc">Portföy verini Telegram botuna aktarmak için aşağıdaki butona bas. 
-                    İndirilen dosyayı <code>fon</code> klasörüne taşı.</p>
-                    <button class="btn btn-secondary" onclick="exportPortfolio()" style="margin-bottom: 0;">
-                        📥 Portföy Verisini İndir (JSON)
-                    </button>
+                    <h3 class="card-title">📲 Veri Senkronizasyonu</h3>
+                    <p class="card-desc">Portföy verini bilgisayarında yedekleyebilir veya telefonunda buluttan indirebilirsin.</p>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn btn-secondary" onclick="exportPortfolio()" style="margin-bottom: 0;">
+                            📥 Veriyi İndir (Bilgisayar İçin)
+                        </button>
+                        <button class="btn btn-primary" onclick="fetchPortfolioFromCloud()" style="margin-bottom: 0; background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white;">
+                            ☁️ Buluttan İçe Aktar (Telefon İçin)
+                        </button>
+                    </div>
                 </div>
             </section>
 

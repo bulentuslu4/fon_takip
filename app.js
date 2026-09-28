@@ -1380,6 +1380,29 @@ function exportPortfolio() {
     showToast('Portföy verisi indirildi! 📥 Telegram botu için fon klasörüne taşı.', 'success');
 }
 
+async function fetchPortfolioFromCloud() {
+    try {
+        const response = await fetch('portfolio_export.json?v=' + new Date().getTime());
+        if (response.ok) {
+            const data = await response.json();
+            if (data.transactions && Array.isArray(data.transactions)) {
+                state.transactions = data.transactions;
+                saveState();
+                refreshPortfolio();
+                refreshDashboard();
+                showToast('Buluttan portföy başarıyla eşillendi! 🎉', 'success');
+            } else {
+                showToast('Hata: Buluttaki dosya formatı geçersiz.', 'error');
+            }
+        } else {
+            showToast('Bulutta portföy dosyası bulunamadı. Önce PC\'den yüklemelisin.', 'error');
+        }
+    } catch (e) {
+        showToast('Bağlantı hatası: Portföy çekilemedi.', 'error');
+        console.error(e);
+    }
+}
+
 // ==================== INITIALIZATION ====================
 
 function init() {
