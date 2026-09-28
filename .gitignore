@@ -1,0 +1,4 @@
+node_modules/
+bildirim_data.json
+portfolio_export.json
+.DS_Store
