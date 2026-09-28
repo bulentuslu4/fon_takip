@@ -81,8 +81,41 @@ function loadState() {
         });
         if (!state.transactions) state.transactions = [];
         if (!state.checklist) state.checklist = {};
+        
+        // Asenkron olarak otomatik fiyatları çek
+        fetchAutoPrices();
     } catch (e) {
         console.error('State load error:', e);
+    }
+}
+
+async function fetchAutoPrices() {
+    try {
+        const response = await fetch('prices.json?v=' + new Date().getTime()); // cache busting
+        if (response.ok) {
+            const data = await response.json();
+            let updated = false;
+            FUND_ORDER.forEach(code => {
+                if (data[code]) {
+                    state.prices[code] = parseFloat(data[code]);
+                    updated = true;
+                }
+            });
+            
+            if (updated) {
+                console.log('Fiyatlar otomatik güncellendi (prices.json)');
+                saveState();
+                
+                // Eğer şuan dashboard veya portföy sayfasındaysa sayfayı yenile
+                if (document.getElementById('page-dashboard').classList.contains('active')) {
+                    refreshDashboard();
+                } else if (document.getElementById('page-portfolio').classList.contains('active')) {
+                    refreshPortfolio();
+                }
+            }
+        }
+    } catch (e) {
+        console.log('Otomatik fiyat çekme başarısız (Manuel kullanım devam ediyor):', e);
     }
 }
 

@@ -376,6 +376,16 @@ def run():
     
     save_data(stored_data)
     
+    # Web uygulaması için fiyatları dışa aktar (prices.json)
+    try:
+        prices_export = prices.copy()
+        prices_export["last_updated"] = now.isoformat()
+        with open(Path(__file__).parent / "prices.json", "w", encoding="utf-8") as f:
+            json.dump(prices_export, f, ensure_ascii=False, indent=2)
+        print("✅ Fiyatlar web uygulaması için (prices.json) güncellendi.")
+    except Exception as e:
+        print(f"⚠️ prices.json güncellenirken hata: {e}")
+    
     print("\n✅ Tamamlandı!")
 
 

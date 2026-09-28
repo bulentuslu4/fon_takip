@@ -1,0 +1,24 @@
+{
+  "prices": {
+    "AFA": 1.330663,
+    "AFT": 1.056864,
+    "IJC": 15.862281,
+    "GTA": 1.597489,
+    "AKE": 0.532853
+  },
+  "history": [
+    {
+      "date": "2026-09-28T03:06:53.996055",
+      "prices": {
+        "AFA": 1.330663,
+        "AFT": 1.056864,
+        "IJC": 15.862281,
+        "GTA": 1.597489,
+        "AKE": 0.532853
+      }
+    }
+  ],
+  "last_milestone": 0,
+  "last_weekly_report": null,
+  "portfolio_value_history": []
+}
