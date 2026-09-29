@@ -1,92 +1,92 @@
 {
-  "exportDate": "2026-09-28T08:18:20.326Z",
+  "exportDate": "2026-09-29T13:00:46.516Z",
   "holdings": {
     "AFA": {
-      "units": 926.2708018154311,
-      "totalCost": 1224.53,
-      "currentValue": 1224.53,
-      "price": 1.322
+      "units": 927.0020456095158,
+      "totalCost": 1223.55,
+      "currentValue": 1233.5616220925826,
+      "price": 1.3307
     },
     "AFT": {
-      "units": 829.0625,
-      "totalCost": 875.49,
-      "currentValue": 875.49,
-      "price": 1.056
+      "units": 840.0307190169914,
+      "totalCost": 875.06,
+      "currentValue": 887.8284669290582,
+      "price": 1.0569
     },
     "IJC": {
-      "units": 33.064617710039045,
-      "totalCost": 525,
-      "currentValue": 525,
-      "price": 15.878
+      "units": 33,
+      "totalCost": 516.12,
+      "currentValue": 523.4558999999999,
+      "price": 15.8623
     },
     "GTA": {
-      "units": 329.77386934673365,
-      "totalCost": 525,
-      "currentValue": 525,
-      "price": 1.592
+      "units": 339.1079508726568,
+      "totalCost": 524.6,
+      "currentValue": 541.7249515190691,
+      "price": 1.5975
     },
     "AKE": {
-      "units": 662.8787878787879,
-      "totalCost": 350,
-      "currentValue": 350,
-      "price": 0.528
+      "units": 665.0380228136881,
+      "totalCost": 349.81,
+      "currentValue": 354.39876235741445,
+      "price": 0.5329
     }
   },
   "prices": {
-    "AFA": 1.322,
-    "AFT": 1.056,
-    "IJC": 15.878,
-    "GTA": 1.592,
-    "AKE": 0.528
+    "AFA": 1.3307,
+    "AFT": 1.0569,
+    "IJC": 15.8623,
+    "GTA": 1.5975,
+    "AKE": 0.5329
   },
-  "totalValue": 3500.02,
-  "totalCost": 3500.02,
-  "totalPnl": 0,
+  "totalValue": 3540.9697028981245,
+  "totalCost": 3489.1399999999994,
+  "totalPnl": 51.829702898125106,
   "transactions": [
     {
-      "id": "mukz11sm17kir",
-      "fund": "AFA",
-      "type": "buy",
-      "amount": 1224.53,
-      "price": 1.322,
-      "units": 926.2708018154311,
-      "date": "2026-09-28"
-    },
-    {
-      "id": "mukz2kezqu6r2",
-      "fund": "AFT",
-      "type": "buy",
-      "amount": 875.49,
-      "price": 1.056,
-      "units": 829.0625,
-      "date": "2026-09-28"
-    },
-    {
-      "id": "mukz3n3tdvkwf",
-      "fund": "IJC",
-      "type": "buy",
-      "amount": 525,
-      "price": 15.878,
-      "units": 33.064617710039045,
-      "date": "2026-09-28"
-    },
-    {
-      "id": "mukz4hlvjtgid",
+      "id": "muml43vxymhkq",
       "fund": "GTA",
       "type": "buy",
-      "amount": 525,
-      "price": 1.592,
-      "units": 329.77386934673365,
-      "date": "2026-09-28"
+      "amount": 524.6,
+      "price": 1.547,
+      "units": 339.1079508726568,
+      "date": "2026-09-29"
     },
     {
-      "id": "mukz5r57489d7",
+      "id": "muml4z4c6252l",
+      "fund": "IJC",
+      "type": "buy",
+      "amount": 516.12,
+      "price": 15.64,
+      "units": 33,
+      "date": "2026-09-29"
+    },
+    {
+      "id": "muml5z6hpqwes",
+      "fund": "AFA",
+      "type": "buy",
+      "amount": 1223.55,
+      "price": 1.3199,
+      "units": 927.0020456095158,
+      "date": "2026-09-29"
+    },
+    {
+      "id": "mumomz47cawgs",
+      "fund": "AFT",
+      "type": "buy",
+      "amount": 875.06,
+      "price": 1.0417,
+      "units": 840.0307190169914,
+      "date": "2026-09-29"
+    },
+    {
+      "id": "mumonbzdkrho1",
       "fund": "AKE",
       "type": "buy",
-      "amount": 350,
-      "price": 0.528,
-      "units": 662.8787878787879,
-      "date": "2026-09-28"
+      "amount": 349.81,
+      "price": 0.526,
+      "units": 665.0380228136881,
+      "date": "2026-09-29"
     }
   ]
 }
