@@ -5,6 +5,7 @@
 
 /* ---- CSS Variables ---- */
 :root {
+    /* DEFAULT THEME (Neo Mint) */
     --bg-primary: #060a14;
     --bg-secondary: #0d1321;
     --bg-card: rgba(255, 255, 255, 0.04);
@@ -28,16 +29,14 @@
     --text-secondary: #8892b0;
     --text-muted: #4a5568;
 
+    /* Common Variables */
     --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-
     --radius-sm: 8px;
     --radius-md: 14px;
     --radius-lg: 20px;
     --radius-xl: 28px;
-
     --shadow-card: 0 4px 30px rgba(0, 0, 0, 0.3);
-    --shadow-glow: 0 0 40px rgba(0, 212, 170, 0.1);
-
+    --shadow-glow: 0 0 40px var(--accent-primary-glow);
     --nav-height: 72px;
     --header-height: 60px;
 
@@ -47,6 +46,44 @@
     --fund-ijc: #00e676;
     --fund-gta: #ffd740;
     --fund-ake: #ff8a65;
+}
+
+/* CYBERPUNK THEME */
+[data-theme="cyberpunk"] {
+    --bg-primary: #0f0f1b;
+    --bg-secondary: #1a0b2e;
+    --accent-primary: #ff007f;
+    --accent-primary-glow: rgba(255, 0, 127, 0.3);
+    --accent-secondary: #00f0ff;
+    --accent-secondary-glow: rgba(0, 240, 255, 0.3);
+    --accent-gold: #fcee0a;
+    --color-positive: #00f0ff;
+    --color-negative: #ff007f;
+}
+
+/* HACKER THEME */
+[data-theme="hacker"] {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #111111;
+    --bg-card: rgba(0, 255, 65, 0.05);
+    --bg-card-border: rgba(0, 255, 65, 0.2);
+    --accent-primary: #00ff41;
+    --accent-primary-glow: rgba(0, 255, 65, 0.3);
+    --accent-secondary: #008f11;
+    --color-positive: #00ff41;
+    --text-primary: #00ff41;
+    --text-secondary: #008f11;
+}
+
+/* NEON PURPLE THEME */
+[data-theme="purple"] {
+    --bg-primary: #130a1c;
+    --bg-secondary: #1c0a2b;
+    --accent-primary: #b537f2;
+    --accent-primary-glow: rgba(181, 55, 242, 0.3);
+    --accent-secondary: #ff3366;
+    --color-positive: #00e676;
+    --color-negative: #ff3366;
 }
 
 /* ---- Reset ---- */

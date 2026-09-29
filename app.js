@@ -305,6 +305,61 @@ function refreshDashboard() {
     renderAllocationChart(data);
     renderAssetClassChart(data);
     renderGrowthChart();
+    
+    // Gamification Badges
+    renderBadges(data);
+}
+
+function renderBadges(data) {
+    const container = document.getElementById('badgesContainer');
+    if (!container) return;
+    
+    const badges = [];
+    
+    // Badge 1: İlk Adım
+    if (state.transactions.length > 0) {
+        badges.push({ icon: '🌱', title: 'İlk Adım', desc: 'İlk yatırımını yaptın' });
+    }
+    
+    // Badge 2: Kulüpler
+    if (data.totalValue >= 100000) {
+        badges.push({ icon: '👑', title: '100K Kulübü', desc: 'Portföy 100.000 TL\'yi aştı' });
+    } else if (data.totalValue >= 50000) {
+        badges.push({ icon: '💎', title: '50K Kulübü', desc: 'Portföy 50.000 TL\'yi aştı' });
+    } else if (data.totalValue >= 10000) {
+        badges.push({ icon: '🥇', title: '10K Kulübü', desc: 'Portföy 10.000 TL\'yi aştı' });
+    } else if (data.totalValue >= 5000) {
+        badges.push({ icon: '🥈', title: '5K Kulübü', desc: 'Portföy 5.000 TL\'yi aştı' });
+    }
+    
+    // Badge 3: Çeşitlilik
+    const activeFunds = Object.values(data.funds).filter(f => f.units > 0).length;
+    if (activeFunds >= 5) {
+        badges.push({ icon: '🎨', title: 'Çeşitlilik Ustası', desc: 'Tüm fon türlerinde pay var' });
+    }
+    
+    // Badge 4: Kârlılık
+    if (data.totalPnl > 0) {
+        badges.push({ icon: '📈', title: 'Yeşil Işık', desc: 'Portföyün kârda' });
+    }
+
+    // Badge 5: İstikrar (Eğer en az 5 işlem varsa)
+    if (state.transactions.length >= 5) {
+        badges.push({ icon: '🕰️', title: 'İstikrar Abidesi', desc: 'Düzenli yatırıma devam' });
+    }
+
+    if (badges.length === 0) {
+        container.innerHTML = '<span style="font-size:0.8rem; color:var(--text-muted);">Henüz rozet kazanmadın. Hemen yatırım yapmaya başla!</span>';
+        return;
+    }
+
+    container.innerHTML = badges.map(b => `
+        <div style="min-width: 125px; background: rgba(255,255,255,0.03); border: 1px solid var(--bg-card-border); border-radius: var(--radius-md); padding: 12px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+            <div style="font-size: 2.2rem; margin-bottom: 6px; filter: drop-shadow(0 2px 8px var(--accent-primary-glow));">${b.icon}</div>
+            <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">${b.title}</div>
+            <div style="font-size: 0.65rem; color: var(--text-secondary); line-height: 1.3;">${b.desc}</div>
+        </div>
+    `).join('');
 }
 
 function updateLastUpdateTime() {
@@ -1422,7 +1477,17 @@ function init() {
     // Init scenario chart after short delay
     setTimeout(() => renderScenarioChart(), 500);
 
+    // Set initial theme if saved
+    const savedTheme = localStorage.getItem('fontakip_theme') || 'default';
+    document.getElementById('themeSelect').value = savedTheme;
+    changeTheme(savedTheme);
+
     console.log('🚀 FonTakip initialized!');
+}
+
+function changeTheme(themeName) {
+    document.documentElement.setAttribute('data-theme', themeName);
+    localStorage.setItem('fontakip_theme', themeName);
 }
 
 // Start app
