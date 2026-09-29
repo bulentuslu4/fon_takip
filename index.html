@@ -160,6 +160,17 @@
                         <canvas id="growthChart"></canvas>
                     </div>
                 </div>
+
+                <!-- Reel Getiri Benchmark -->
+                <div class="glass-card full-width" style="border-left: 3px solid #00f0ff;">
+                    <h3 class="card-title">📉 Reel Getiri (Dolar & Enflasyon Kıyaslaması)</h3>
+                    <p class="card-desc">Portföyünün kârı, Dolar veya Altın'a kıyasla ne durumda?</p>
+                    
+                    <div class="stats-grid" id="benchmarkGrid">
+                        <!-- Filled by JS -->
+                        <div class="stat-card" style="opacity: 0.7;">Yükleniyor...</div>
+                    </div>
+                </div>
             </section>
 
             <!-- ==================== PORTFOLIO PAGE ==================== -->
@@ -328,6 +339,24 @@
                     <div class="chart-container chart-wide">
                         <canvas id="simChart"></canvas>
                     </div>
+                </div>
+
+                <!-- FIRE Calculator (Financial Freedom) -->
+                <div class="glass-card" style="border-left: 3px solid var(--accent-gold);">
+                    <h3 class="card-title">🏖️ Finansal Özgürlük (FIRE) Sayacı</h3>
+                    <p class="card-desc">Sadece fon getirileriyle geçinebilmek için hedefine ne kadar kaldı?</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="fireMonthlyNeed">Hedef Aylık Gelir (₺)</label>
+                            <input type="number" id="fireMonthlyNeed" value="20000" min="1000" step="1000">
+                        </div>
+                        <div class="form-group">
+                            <label for="fireSafeWithdrawal">Güvenli Çekim Oranı (%)</label>
+                            <input type="number" id="fireSafeWithdrawal" value="4" min="1" max="10" step="0.5">
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="calculateFIRE()">Hedefimi Hesapla</button>
+                    <div id="fireResult" class="sim-summary" style="display:none; margin-top: 16px;"></div>
                 </div>
 
                 <!-- Scenario Comparison -->

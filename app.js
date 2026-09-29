@@ -308,6 +308,68 @@ function refreshDashboard() {
     
     // Gamification Badges
     renderBadges(data);
+    
+    // Reel Getiri Benchmarks
+    renderBenchmarks(data);
+}
+
+function renderBenchmarks(data) {
+    const grid = document.getElementById('benchmarkGrid');
+    if (!grid) return;
+    
+    if (data.totalCost <= 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; color: var(--text-muted); font-size: 0.8rem;">İşlem bulunamadı.</div>';
+        return;
+    }
+    
+    const myPnlPct = data.totalPnlPercent;
+    
+    // Gold Benchmark (GTA)
+    const gta = data.funds['GTA'];
+    const gtaReturn = gta && gta.avgCost > 0 ? ((gta.price - gta.avgCost) / gta.avgCost * 100) : 0;
+    const diffGold = myPnlPct - gtaReturn;
+    
+    // US Stocks Benchmark (AFA)
+    const afa = data.funds['AFA'];
+    const afaReturn = afa && afa.avgCost > 0 ? ((afa.price - afa.avgCost) / afa.avgCost * 100) : 0;
+    const diffUsd = myPnlPct - afaReturn;
+    
+    const generateCard = (title, benchPct, diffPct, icon) => {
+        const diffColor = diffPct >= 0 ? 'var(--color-positive)' : 'var(--color-negative)';
+        const diffText = diffPct >= 0 ? '+' + formatNumber(diffPct, 2) : formatNumber(diffPct, 2);
+        
+        return `
+            <div class="stat-card" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+                <div style="display:flex; align-items:center; gap: 8px;">
+                    <div style="font-size:1.5rem;">${icon}</div>
+                    <div class="stat-label">${title}</div>
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                    Eğer hepsini buna yatırsaydın getirin: <strong style="color:var(--text-primary);">%${formatNumber(benchPct, 2)}</strong> olurdu.
+                </div>
+                <div style="font-size: 0.75rem; background: rgba(255,255,255,0.05); padding: 6px 10px; border-radius: var(--radius-sm); width: 100%;">
+                    Senin portföyün buna göre <strong style="color:${diffColor}; font-size:0.85rem;">${diffText}%</strong> 
+                    ${diffPct >= 0 ? 'daha iyi!' : 'geride kaldı.'}
+                </div>
+            </div>
+        `;
+    };
+    
+    let html = '';
+    
+    if (gta && gta.avgCost > 0) {
+        html += generateCard('Altın (GTA) Kıyaslaması', gtaReturn, diffGold, '🪙');
+    } else {
+        html += `<div class="stat-card"><div class="stat-info"><span class="stat-label">Altın</span><span class="stat-value" style="font-size:0.8rem;">Altın işlemi yok</span></div></div>`;
+    }
+    
+    if (afa && afa.avgCost > 0) {
+        html += generateCard('Yabancı Hisse (AFA) Kıyaslaması', afaReturn, diffUsd, '🗽');
+    } else {
+        html += `<div class="stat-card"><div class="stat-info"><span class="stat-label">Yabancı Hisse</span><span class="stat-value" style="font-size:0.8rem;">AFA işlemi yok</span></div></div>`;
+    }
+    
+    grid.innerHTML = html;
 }
 
 function renderBadges(data) {
@@ -1141,6 +1203,74 @@ function renderScenarioChart() {
         data: { labels, datasets },
         options: getLineChartOptions('3 Yıllık Senaryo Karşılaştırma')
     });
+}
+
+// ==================== FIRE CALCULATOR ====================
+
+function calculateFIRE() {
+    const monthlyNeed = parseFloat(document.getElementById('fireMonthlyNeed').value);
+    const safeWithdrawal = parseFloat(document.getElementById('fireSafeWithdrawal').value) / 100;
+    
+    // Get simulator inputs for current projection
+    const initial = parseFloat(document.getElementById('simInitial').value) || getPortfolioData().totalValue || 0;
+    const monthlyAdd = parseFloat(document.getElementById('simMonthly').value) || 1000;
+    const returnRate = parseFloat(document.getElementById('simReturn').value) / 100;
+    
+    if (isNaN(monthlyNeed) || isNaN(safeWithdrawal)) {
+        showToast('Lütfen FIRE alanlarını doldur.', 'error');
+        return;
+    }
+
+    // Target Portfolio = (Monthly Need * 12) / Safe Withdrawal Rate
+    const targetPortfolio = (monthlyNeed * 12) / safeWithdrawal;
+    
+    let current = initial;
+    let months = 0;
+    let possible = true;
+    
+    // Monthly interest rate
+    const monthlyRate = Math.pow(1 + returnRate, 1/12) - 1;
+    
+    // Prevent infinite loop if return is 0 and monthly add is 0
+    if (monthlyAdd === 0 && (current * returnRate) < (monthlyNeed * 12)) {
+        // Will never reach without enough return or additions
+        if (current >= targetPortfolio) {
+            months = 0;
+        } else {
+            possible = false;
+        }
+    }
+    
+    while (current < targetPortfolio && months < 1200 && possible) {
+        current = current * (1 + monthlyRate) + monthlyAdd;
+        months++;
+    }
+    
+    const resBox = document.getElementById('fireResult');
+    resBox.style.display = 'block';
+    
+    if (!possible || months >= 1200) {
+        resBox.innerHTML = `
+            <div style="color: var(--color-negative); font-weight: bold; margin-bottom: 8px;">Ulaşılamaz Hedef</div>
+            <div class="sim-stat-value" style="font-size: 1rem;">Bu yatırım hızıyla hedefe ulaşmak 100 yıldan fazla sürüyor.</div>
+        `;
+    } else {
+        const years = Math.floor(months / 12);
+        const remMonths = months % 12;
+        
+        resBox.innerHTML = `
+            <div class="sim-stat-label">Hedef Portföy Büyüklüğü</div>
+            <div class="sim-stat-value" style="color: var(--accent-gold); font-size: 1.5rem; margin-bottom: 12px;">${formatCurrency(targetPortfolio)}</div>
+            
+            <div class="sim-stat-label">Finansal Özgürlüğe Kalan Süre</div>
+            <div class="sim-stat-value" style="color: var(--color-positive); font-size: 1.2rem;">
+                ${years > 0 ? years + ' Yıl ' : ''}${remMonths > 0 ? remMonths + ' Ay' : (years === 0 ? 'Hemen!' : '')}
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 8px; font-weight: normal; line-height: 1.4;">
+                * Hesaplama, mevcut portföyün (₺${formatNumber(initial, 0)}), aylık ₺${formatNumber(monthlyAdd, 0)} ek yatırımın ve yıllık %${(returnRate*100).toFixed(0)} getirinin sabit kalacağı varsayımıyla yapılmıştır. Enflasyondan arındırılmış (reel) getiri oranını kullanman önerilir.
+            </div>
+        `;
+    }
 }
 
 // ==================== ADVISOR ====================
