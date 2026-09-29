@@ -344,12 +344,20 @@ function renderFundCards(data) {
                     <span class="fund-metric-value ${pnlClass}">${f.totalCost > 0 ? formatCurrency(f.pnl) : '--'}</span>
                 </div>
                 <div class="fund-metric">
-                    <span class="fund-metric-label">Birim Fiyat</span>
+                    <span class="fund-metric-label">Güncel Fiyat</span>
                     <span class="fund-metric-value">₺${formatNumber(f.price, 4)}</span>
+                </div>
+                <div class="fund-metric">
+                    <span class="fund-metric-label">Ort. Maliyet</span>
+                    <span class="fund-metric-value">₺${f.avgCost > 0 ? formatNumber(f.avgCost, 4) : '--'}</span>
                 </div>
                 <div class="fund-metric">
                     <span class="fund-metric-label">Pay Adedi</span>
                     <span class="fund-metric-value">${f.units > 0 ? formatNumber(f.units, 2) : '--'}</span>
+                </div>
+                <div class="fund-metric">
+                    <span class="fund-metric-label">Getiri (%)</span>
+                    <span class="fund-metric-value ${pnlClass}">${f.totalCost > 0 ? (f.pnlPercent > 0 ? '+' : '') + '%' + formatNumber(f.pnlPercent, 2) : '--'}</span>
                 </div>
                 <div class="fund-progress">
                     <div class="fund-progress-labels">
