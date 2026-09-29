@@ -98,8 +98,8 @@ def fetch_all_prices():
         try:
             data = crawler.fetch(start=yesterday, end=today, name=code, columns=['date', 'price'])
             if data is not None and not data.empty:
-                # Get the most recent price
-                latest_price = float(data.iloc[0]['price'])
+                # Get the most recent price (last row)
+                latest_price = float(data.iloc[-1]['price'])
                 prices[code] = latest_price
                 print(f"  [OK] {code}: {latest_price:.4f} TL")
             else:
