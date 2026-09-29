@@ -1210,40 +1210,57 @@ function renderScenarioChart() {
 function calculateFIRE() {
     const monthlyNeed = parseFloat(document.getElementById('fireMonthlyNeed').value);
     const safeWithdrawal = parseFloat(document.getElementById('fireSafeWithdrawal').value) / 100;
+    const invGrowth = (parseFloat(document.getElementById('fireInvGrowth').value) || 0) / 100;
+    const wwYears = parseFloat(document.getElementById('fireWalterWhite').value);
     
     // Get simulator inputs for current projection
     const initial = parseFloat(document.getElementById('simInitial').value) || getPortfolioData().totalValue || 0;
-    const monthlyAdd = parseFloat(document.getElementById('simMonthly').value) || 1000;
+    let monthlyAdd = parseFloat(document.getElementById('simMonthly').value) || 1000;
     const returnRate = parseFloat(document.getElementById('simReturn').value) / 100;
     
-    if (isNaN(monthlyNeed) || isNaN(safeWithdrawal)) {
-        showToast('Lütfen FIRE alanlarını doldur.', 'error');
+    if (isNaN(monthlyNeed)) {
+        showToast('Lütfen Hedef Aylık Gelir alanını doldur.', 'error');
         return;
     }
 
-    // Target Portfolio = (Monthly Need * 12) / Safe Withdrawal Rate
-    const targetPortfolio = (monthlyNeed * 12) / safeWithdrawal;
+    let targetPortfolio = 0;
+    let modeText = "";
+    
+    // Walter White Mode (Anaparayı Tüketme)
+    if (!isNaN(wwYears) && wwYears > 0) {
+        // Emeklilikte %5 reel getiri varsayımıyla bugünkü değer hesabı (Annuity Present Value)
+        const r = 0.05 / 12; 
+        const n = wwYears * 12;
+        targetPortfolio = monthlyNeed * (1 - Math.pow(1 + r, -n)) / r;
+        modeText = `💀 <b>Walter White Modu Aktif:</b> Ölene kadar (${wwYears} yıl) kral gibi yaşa, anaparan tam bittiğinde sıfıra in. (Miras bırakmak yok!)`;
+    } else {
+        // Standart FIRE (Sonsuz Yaşam / Miras Bırakma)
+        if (isNaN(safeWithdrawal)) {
+            showToast('Güvenli çekim oranı gerekli.', 'error');
+            return;
+        }
+        targetPortfolio = (monthlyNeed * 12) / safeWithdrawal;
+        modeText = `👼 <b>Sonsuzluk Modu Aktif:</b> Anaparana hiç dokunmuyorsun, sadece faiziyle geçiniyorsun. Torunlarına devasa bir miras kalacak.`;
+    }
     
     let current = initial;
     let months = 0;
     let possible = true;
     
-    // Monthly interest rate
     const monthlyRate = Math.pow(1 + returnRate, 1/12) - 1;
     
-    // Prevent infinite loop if return is 0 and monthly add is 0
-    if (monthlyAdd === 0 && (current * returnRate) < (monthlyNeed * 12)) {
-        // Will never reach without enough return or additions
-        if (current >= targetPortfolio) {
-            months = 0;
-        } else {
-            possible = false;
-        }
+    if (monthlyAdd === 0 && (current * returnRate) < (monthlyNeed * 12) && current < targetPortfolio) {
+        possible = false;
     }
     
     while (current < targetPortfolio && months < 1200 && possible) {
         current = current * (1 + monthlyRate) + monthlyAdd;
         months++;
+        
+        // Her yıl yatırımı artır (Maaş zammı / Kariyer büyümesi)
+        if (months % 12 === 0 && invGrowth > 0) {
+            monthlyAdd = monthlyAdd * (1 + invGrowth);
+        }
     }
     
     const resBox = document.getElementById('fireResult');
@@ -1259,15 +1276,20 @@ function calculateFIRE() {
         const remMonths = months % 12;
         
         resBox.innerHTML = `
+            <div style="font-size: 0.8rem; background: rgba(0,255,255,0.1); padding: 8px; border-radius: 6px; margin-bottom: 12px; border-left: 3px solid #00f0ff;">
+                ${modeText}
+            </div>
+            
             <div class="sim-stat-label">Hedef Portföy Büyüklüğü</div>
             <div class="sim-stat-value" style="color: var(--accent-gold); font-size: 1.5rem; margin-bottom: 12px;">${formatCurrency(targetPortfolio)}</div>
             
-            <div class="sim-stat-label">Finansal Özgürlüğe Kalan Süre</div>
+            <div class="sim-stat-label">Özgürlüğe Kalan Süre</div>
             <div class="sim-stat-value" style="color: var(--color-positive); font-size: 1.2rem;">
                 ${years > 0 ? years + ' Yıl ' : ''}${remMonths > 0 ? remMonths + ' Ay' : (years === 0 ? 'Hemen!' : '')}
             </div>
+            
             <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 8px; font-weight: normal; line-height: 1.4;">
-                * Hesaplama, mevcut portföyün (₺${formatNumber(initial, 0)}), aylık ₺${formatNumber(monthlyAdd, 0)} ek yatırımın ve yıllık %${(returnRate*100).toFixed(0)} getirinin sabit kalacağı varsayımıyla yapılmıştır. Enflasyondan arındırılmış (reel) getiri oranını kullanman önerilir.
+                * Yatırım artış oranı her yıl uygulandı. (Gelecek yıl aylık yatırımın: ₺${formatNumber(parseFloat(document.getElementById('simMonthly').value || 1000) * (1+invGrowth), 0)})
             </div>
         `;
     }

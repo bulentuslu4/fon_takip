@@ -354,6 +354,14 @@
                             <label for="fireSafeWithdrawal">Güvenli Çekim Oranı (%)</label>
                             <input type="number" id="fireSafeWithdrawal" value="4" min="1" max="10" step="0.5">
                         </div>
+                        <div class="form-group">
+                            <label for="fireInvGrowth" title="Maaşın arttıkça her yıl aylık yatırımını yüzde kaç artıracaksın?">Yıllık Yatırım Artış Oranı (%)</label>
+                            <input type="number" id="fireInvGrowth" value="10" min="0" max="100" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="fireWalterWhite" title="Öldüğünde 0 TL kalsın istiyorsan kaç yıl paran yetsin?">Walter White Modu (Yıl)</label>
+                            <input type="number" id="fireWalterWhite" placeholder="Örn: 40 (Boş = Sonsuz)" min="1" max="100" step="1">
+                        </div>
                     </div>
                     <button class="btn btn-secondary" onclick="calculateFIRE()">Hedefimi Hesapla</button>
                     <div id="fireResult" class="sim-summary" style="display:none; margin-top: 16px;"></div>
